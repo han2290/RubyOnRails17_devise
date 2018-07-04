@@ -8,6 +8,7 @@ class CreateMovies < ActiveRecord::Migration[5.0]
       t.string          :image_path
       
       t.integer         :user_id
+      # t.integer         :likes
       
       t.text            :description
       
