@@ -4,7 +4,26 @@ class MoviesController < ApplicationController
   
   before_action :authenticate_user!, except: [:index, :show]
   #1 위 친구가 ajax로 온 요청을 받아도 응답을 하지 못한다.
-  before_action :set_movie, only: [:show, :edit, :update, :destroy]
+  before_action :set_movie, only: [:show, :edit, :update, :destroy, :create_comment]
+  
+  
+  def create_comment
+    @comment = Comment.create(
+      user_id: current_user.id, 
+      movie_id: @movie.id, 
+      contents: params[:contents])
+    
+  end
+  
+  def destroy_comment
+    @comment = Comment.find(params[:comment_id]).destroy
+  end
+  
+  def update_comment
+    Comment.find(params[:comment_id]).update(contents: params[:contents])
+    @comment = Comment.find(params[:comment_id])
+
+  end
   
   def like_movie
     set_like={user_id: current_user.id, movie_id: params[:movie_id]}
@@ -37,7 +56,6 @@ class MoviesController < ApplicationController
   # GET /movies/1
   # GET /movies/1.json
   def show
-    
     @user_likes_movie = Like.where(user_id: current_user.id, movie_id: @movie.id).first if user_signed_in?
 
   end

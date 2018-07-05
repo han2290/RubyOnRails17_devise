@@ -7,19 +7,110 @@
 <%= link_to 'Back', movies_path %>
 <br>
 <% if @user_likes_movie.nil? %>
-    <button class="btn btn-info like">좋아요</button>
+    <button class="btn btn-info like">
+        좋아요(<span class="like-count"><%= @movie.likes.count %></span>)
+    </button>
 <% else %>
-    <button class="btn btn-warning like">좋아요 취소</button>
+    <button  class="btn btn-warning like">
+        좋아요 취소(<span class="like-count"><%= @movie.likes.count %></span>)
+    </button>
 <% end %>
+
+<hr>
+<form class = "d-flex comment">
+    <input class = "p-2 form-control comment-contents">
+    <input class = "p-2 btn btn-primary" type = "submit" value = "댓글 쓰기">
+</form>
+<!--<h3>댓글</h3>-->
+<ul class="list-group comment-list">
+  <!--<li class="list-group-item"></li>-->
+  <% @movie.comments.reverse.each do |comment| %>
+    <li class="comment-<%= comment.id %> list-group-item d-flex justify-content-between">
+          <span class="comment-detail-<%= comment.id %>"><%= comment.contents %></span>
+          <div>
+              <button data-id="<%= comment.id %>" class="btn btn-warning text-white edit-comment">수정</button>
+              <button data-id="<%= comment.id %>" class="btn btn-danger destroy-comment">삭제</button>
+          </div>
+    </li>
+  <% end%>
+
+</ul>
+<hr>
 
 
 <script>
     $(document).on('ready', function(){
+        //좋아요
         $('.like').on('click', function() {
             console.log('like!!!!')
             $.ajax({
                url: '/likes/<%= @movie.id %>'
             });
         });
+        
+        //댓글 추가
+        $('.comment').on('submit', function(e) {
+            e.preventDefault(); //기존의 이벤트 제거, 예를 들어 form 동작
+            var comm = $('.comment-contents').val();
+            console.log(comm)
+            if(comm.length >= 1 ){
+                $.ajax({
+                   url: '/movies/<%= @movie.id %>/comments',
+                   method: "post",
+                   data: {
+                       contents: comm
+                   }
+                });
+            }
+            
+        });
+        
+        //댓글 삭제
+        $(document).on('click', '.destroy-comment', function(){
+           console.log("destroyed");
+        //   $(this).parent().remove();
+           var comment_id = $(this).attr('data-id');
+           console.log(comment_id)
+           $.ajax({
+               url: "/movies/comments/" + comment_id,
+               method: "delete"
+           });
+        });
+        
+        //댓글 수정
+        $(document).on('click','.edit-comment', function(){
+           var comment_id = $(this).data('id'); //data-id를 가져옴
+           var edit_comment = $(`.comment-detail-${comment_id}`);
+           var contents = edit_comment.text().trim();
+           
+           console.log( String($('.update-comment').attr('class')))
+           
+           //다른 수정 감지
+           if(String($('.update-comment').attr('class')).includes("update-comment")){
+               alert("이미 수정 중인 댓글이 있습니다.")
+               return false;
+           }
+           
+           //요소를 찾아서 문서 구성을 다음과 같이 바꾼다.
+           $(`.comment-detail-${comment_id}`).html(`
+               <input type="text" value="${contents}" class="form-control edit-comment-${comment_id}" >
+           `)
+           $(this).text('확인').removeClass("edit-comment btn-warning").addClass("update-comment btn-dark")
+        });
+        
+        $(document).on('click', '.update-comment', function(){
+           console.log("update") 
+           var comment_id = $(this).data('id');
+           var comment_form = $(`.edit-comment-${comment_id}`);
+          
+           $.ajax({
+               url: "/movies/comments/" + comment_id,
+               method: "patch",
+               data: {
+                   contents: comment_form.val()
+               }
+           })
+        });
+        
     });
 </script>
