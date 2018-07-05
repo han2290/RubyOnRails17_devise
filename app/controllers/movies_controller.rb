@@ -37,6 +37,9 @@ class MoviesController < ApplicationController
   # GET /movies/1
   # GET /movies/1.json
   def show
+    
+    @user_likes_movie = Like.where(user_id: current_user.id, movie_id: @movie.id).first if user_signed_in?
+
   end
 
   # GET /movies/new
