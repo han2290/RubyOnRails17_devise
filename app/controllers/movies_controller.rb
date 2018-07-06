@@ -1,5 +1,5 @@
 class MoviesController < ApplicationController
-  before_action :js_authenticate_user!, only: [:like_movie]
+  before_action :js_authenticate_user!, only: [:like_movie, :create_comment, :destroy_comment, :update_comment]
   #2 따라서 이 메소드를 만들어서 ajax 요청을 응답하는 처리를 한다. 
   
   before_action :authenticate_user!, except: [:index, :show]
@@ -22,7 +22,6 @@ class MoviesController < ApplicationController
   def update_comment
     Comment.find(params[:comment_id]).update(contents: params[:contents])
     @comment = Comment.find(params[:comment_id])
-
   end
   
   def like_movie
@@ -50,7 +49,8 @@ class MoviesController < ApplicationController
   # GET /movies
   # GET /movies.json
   def index
-    @movies = Movie.all
+    @movies = Movie.page(params[:page])
+    
   end
 
   # GET /movies/1
@@ -108,6 +108,19 @@ class MoviesController < ApplicationController
       format.json { head :no_content }
     end
   end
+  
+  #영화 검색
+  def search_movie
+    respond_to do |format|
+      if params[:q].strip.empty?
+        format.js {render 'no_content'}
+      else
+        @movies = Movie.where("title LIKE ?", "#{params[:q]}%")
+        format.js {render 'search_movie'}
+      end
+    end
+  end
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.

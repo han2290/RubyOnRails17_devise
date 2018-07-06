@@ -1,5 +1,22 @@
-
 <h1 id="title">Movies</h1>
+
+<!--Movie Create-->
+<%= link_to 'New Movie', new_movie_path %>
+
+<!--로그인-->
+<% if user_signed_in? %>
+  <!--로그인 된 상태-->
+  <%= current_user.email %>
+  <%= link_to "로그아웃", destroy_user_session_path, method: "delete"%>
+<% else %>
+  <!--로그인 안된 상태-->
+  <%= link_to "로그인", new_user_session_path %>
+<% end %>
+
+<input type="text" class = "form-control movie-title">
+<div class="recomm-movie row d-flex justify-content-start" >
+  
+</div>
 <div class = "row">
   <% @movies.each do |movie|%>
     <div class="card col-md-3">
@@ -15,20 +32,30 @@
     </div>
   <% end %>
 </div>
+<%= paginate @movies, theme: 'twitter-bootstrap-4' %>
+<hr>
 <br>
 
-<%= link_to 'New Movie', new_movie_path %>
+
 
 <br>
 
-<% if user_signed_in? %>
-  <!--로그인 된 상태-->
-  <%= current_user.email %>
-  <%= link_to "로그아웃", destroy_user_session_path, method: "delete"%>
-<% else %>
-  <!--로그인 안된 상태-->
-  <%= link_to "로그인", new_user_session_path %>
-<% end %>
+
+
+
+<script>
+  $(document).on('ready', function(){
+    $(`.movie-title`).on('keyup', function() {
+      var title = $(this).val();
+      $.ajax({
+        url: '/movies/search_movie',
+        data: {
+          q: title
+        }
+      })
+    });
+  });
+</script>
 
 <script>
 // 먼저 선언되어 있던 함수를 이벤트 헨들러로 사용할 경우

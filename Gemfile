@@ -5,6 +5,9 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+#faker
+gem 'faker'
+
 #beautify
 gem 'bootstrap', '~> 4.1.1'
 #authentication
@@ -13,6 +16,9 @@ gem 'devise'
 gem 'carrierwave'
 gem 'mini_magick'
 
+#kaminari
+gem 'kaminari'
+gem 'bootstrap4-kaminari-views'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.7'

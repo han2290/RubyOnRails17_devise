@@ -8,6 +8,6 @@ class Movie < ApplicationRecord
     has_many :users, through: :likes
     
     
-    
+    paginates_per 8
     
 end
