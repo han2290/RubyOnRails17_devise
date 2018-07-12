@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
+  mount RailsAdmin::Engine => '/ahctaw', as: 'rails_admin'
   devise_for :users
   root 'movies#index'
+  
+  post '/uploads' => 'movies#upload_image'
   
   resources :movies do
     member do

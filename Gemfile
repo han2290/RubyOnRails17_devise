@@ -5,16 +5,24 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-#faker
+# rails admin
+gem 'rails_admin'
+
+# faker
 gem 'faker'
 
-#beautify
+# beautify
 gem 'bootstrap', '~> 4.1.1'
-#authentication
+
+# authentication
 gem 'devise'
-#file upload
+
+# file upload
 gem 'carrierwave'
 gem 'mini_magick'
+
+#summer
+gem 'summernote-rails', '~> 0.8.10.0'
 
 #kaminari
 gem 'kaminari'
